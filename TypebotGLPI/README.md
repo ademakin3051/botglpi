@@ -55,16 +55,11 @@ EVOLUTION_INSTANCE=seu_id_da_instancia
 
 📸 Demonstração
 
-
 ## 🎬 Demonstração em Vídeo Cadastrando Ticket (CHAMADO)
-<video src="./demonstração/demonstração1.mp4" controls width="600">
-Seu navegador não suporta a tag de vídeo.
-</video>
+![Demonstração 1 - Cadastro de Ticket](./demonstração/demonstração1.gif)
 
 ## Demonstração em Vídeo Ver Andamento de ticket (CHAMADO)
-<video src="./demonstração/demonstração2.mp4" controls width="600">
-Seu navegador não suporta a tag de vídeo.
-</video>
+![Demonstração 1 - Cadastro de Ticket](./demonstração/demonstração2.gif)
 
 
 💡 Diferenciais
