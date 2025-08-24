@@ -75,7 +75,7 @@ EVOLUTION_INSTANCE=seu_id_da_instancia
 ## 👨‍💻 Desenvolvido por
 
 **Natanael Lima**  
-*Software Engineer & AI Enthusiast*
+*Cyber Security RedTeam | Process Automation RPA*
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/natanaellima10/)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ademakin3051)
