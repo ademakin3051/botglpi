@@ -1,0 +1,984 @@
+{
+  "name": "GLPI Github",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b848498e-f2da-41be-a567-cd7c87b3a13e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1856,
+        16
+      ],
+      "id": "890a3341-5da1-4410-8e70-f89f13d45169",
+      "name": "Webhook",
+      "webhookId": "b848498e-f2da-41be-a567-cd7c87b3a13e"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Natanael",
+        "remoteJid": "={{ $('Filtrar informações').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.output }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        496
+      ],
+      "id": "b90f06af-5460-430a-a7f6-27dcf129e6b2",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "6XocWGIwKK6YVhDo",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c453300-a665-4158-b85b-2658a1d07ec7",
+              "name": "session_token",
+              "value": "={{ $json.session_token }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        -448
+      ],
+      "id": "e97a92d0-8b7c-46d5-a619-88adda5edb24",
+      "name": "numero seção"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a7be567-88b6-46a5-b538-baabaa541d8d",
+              "name": "body.data.key.remoteJid",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "baee8a06-d21b-4daf-8fd6-c49ca1479876",
+              "name": "body.data.message.conversation",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1680,
+        16
+      ],
+      "id": "09461f29-0a1b-4d2d-9f76-c4e02c3757aa",
+      "name": "Filtrar informações"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Filtrar informações').item.json.body.data.message.conversation }}",
+        "options": {
+          "systemMessage": "=Você é um assistente de suporte técnico especializado em criar e consultar tickets no GLPI.\n\n📌 Fluxo de atendimento:\n\n1. **DÚVIDA** → Responda normalmente, de forma educada e clara.\n\n2. **PROBLEMA** (abertura de chamado):\n   - Faça uma pergunta por vez e colete:\n        • Nome completo\n        • E-mail\n        • Telefone\n        • Matrícula\n        • Descrição detalhada do problema\n   - Depois gere o JSON do ticket no formato abaixo.\n\n3. **CONSULTA DE CHAMADO**:\n   - Se o usuário disser algo como \"quero consultar meu chamado\", pergunte **somente o número do chamado**.\n   - Depois devolva um JSON no formato:\n   {\n       \"consulta_chamado\": \"NUMERO_DO_CHAMADO\"\n   }\n   - NUNCA inclua outro texto fora do JSON.\n\n4. **Chamar atendente humano**:\n   - Se houver qualquer erro ou problema no atendimento automatizado, **acionar automaticamente a ferramenta chamar_atendente_humano** e informe ao usuário: \"Ocorreu um problema, um atendente humano irá auxiliá-lo em breve.\"\n   - Se o usuário solicitar ajuda de um humano, **acionar a ferramenta chamar_atendente_humano** imediatamente.\n\n📌 Defina a gravidade do problema:\n- ALTA (não funciona, quebrou, parou totalmente) → urgency=5, impact=5, priority=5\n- MÉDIA (lento, instável, com erros) → urgency=3, impact=3, priority=3\n- BAIXA (dúvida, configuração, melhoria) → urgency=1, impact=1, priority=1\n\n📌 Formato do JSON para abrir chamado:\n\n{\n    \"input\": {\n        \"name\": \"NOME_COMPLETO_DO_USUARIO\",\n        \"content\": \"Nome: NOME_COMPLETO\\\\\\\\nEmail: EMAIL_DO_USUARIO\\\\\\\\nTelefone: TELEFONE_DO_USUARIO\\\\\\\\nMatrícula: MATRICULA_DO_USUARIO\\\\\\\\n\\\\\\\\nProblema: DESCRICAO_DETALHADA_DO_PROBLEMA\",\n        \"urgency\": NUMERO_DA_URGENCIA,\n        \"impact\": NUMERO_DO_IMPACTO,\n        \"priority\": NUMERO_DA_PRIORIDADE,\n        \"requester\": \"EMAIL_DO_USUARIO\",\n        \"itilcategories_id\": 1\n    }\n}\n\n📌 Regras críticas:\n- SEMPRE feche o JSON com }\n- NUNCA use blocos de código (\\`\\`\\`)\n- NUNCA adicione texto fora do JSON\n- SEMPRE escape quebras de linha como \\\\\\\\n\n- SEMPRE inclua todos os campos obrigatórios para problemas\n- Sempre acione **chamar_atendente_humano** em caso de erro ou se solicitado pelo usuário\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -1488,
+        16
+      ],
+      "id": "70943f27-1713-485c-8ba8-98b7efb1c54c",
+      "name": "AI Agent1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1616,
+        272
+      ],
+      "id": "14c7f645-1e3e-4d44-883f-2fd8622b15e4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QgALqI5Q3ihpBAix",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Natanael",
+        "remoteJid": "={{ $('Filtrar informações').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.message.content }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -448
+      ],
+      "id": "23583200-49fa-4568-8404-18420e5d918d",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "6XocWGIwKK6YVhDo",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('Criar Chamado GLPI').item.json.message }}"
+            },
+            {
+              "content": "const promptChamado = `Você receberá um JSON no formato:\n[\n  {\n    \"id\": 25,\n    \"message\": \"Item adicionado com sucesso: Natanael de Paulatejando (25)\"\n  }\n]\n\nSua tarefa é:\n1. Ler o campo \"id\" do primeiro objeto do array. Esse valor é o número do chamado e pode mudar a cada JSON.\n2. Gerar uma mensagem amigável e bonita, usando emojis, dizendo que o chamado foi criado, substituindo dinamicamente o número do chamado pelo valor do \"id\" do JSON.\n3. Informar que os detalhes também foram enviados por e-mail.\n4. Dizer que se a pessoa precisar de algo, basta avisar, que você está à disposição.\n\nExemplo esperado (para id = 25):\n✅ Chamado *25* foi criado com sucesso!  \n📧 Também enviamos os detalhes por e-mail.  \n🤝 Se precisar de qualquer coisa, é só me avisar — estarei à disposição!  \n\nRegras importantes:\n- Sempre use o valor do \"id\" do JSON, nunca um número fixo.\n- Não inclua texto extra fora da mensagem.\n- A mensagem deve ser clara, amigável e usar emojis.\n\nAgora faça isso automaticamente sempre que eu colar um JSON desse tipo.`;\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        48,
+        -448
+      ],
+      "id": "4f9d332d-6b89-4c8d-b887-d773b811a899",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QgALqI5Q3ihpBAix",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eaf62da3-7067-402f-91d9-4a02c8fb3021",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "\"urgency\"",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -928,
+        16
+      ],
+      "id": "13c8e80c-0074-4e16-9128-74c6f6ea2715",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código para converter JSON em string e fazer debug\nconst output = $input.first().json.output;\n\nreturn [\n  {\n    json: {\n      // Converte para string explicitamente\n      output: typeof output === 'object' ? JSON.stringify(output) : String(output),\n      \n      // Debug informações\n      original_type: typeof output,\n      is_object: typeof output === 'object',\n      length: typeof output === 'object' ? JSON.stringify(output).length : String(output).length\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        16
+      ],
+      "id": "ee63622b-c795-415b-b2b6-11619823342e",
+      "name": "Converter para String + Debug"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba95e957-875a-4c6f-83e6-62f9cbabed8f",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1056,
+        16
+      ],
+      "id": "42fe6cfc-012d-42ff-b2fc-21993d652a29",
+      "name": "Saida Gpt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://SEU_DOMINIO_GLPI/apirest.php/initSession",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"login\": \"Seu Login\",\n  \"password\": \"Sua Senha\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -592,
+        -448
+      ],
+      "id": "824ee73b-18dd-425c-a064-531d34b42b56",
+      "name": "Criar Seção"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https:/SEU_DOMINIO_GLPI/apirest.php/Ticket",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            },
+            {
+              "name": "Session-Token",
+              "value": "={{ $('numero seção').item.json.session_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Saida Gpt').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        -448
+      ],
+      "id": "7e2c8020-486d-46a2-9d46-0898cdc621db",
+      "name": "Criar Chamado GLPI"
+    },
+    {
+      "parameters": {
+        "url": "https:/SEU_DOMINIO_GLPI/apirest.php/Ticketapirest.php/killSession",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Session-Token",
+              "value": "={{ $('numero seção').item.json.session_token }}"
+            },
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        -448
+      ],
+      "id": "3e4abd29-e9ac-4d54-b88a-c0e69dcdfbb0",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Esta ferramenta deve ser chamada sempre que o usuário precisar de atendimento humano. Use-a quando o problema não puder ser resolvido automaticamente, quando houver solicitação explícita de falar com um atendente, ou se o usuário demonstrar frustração.",
+        "method": "POST",
+        "url": "https://SEU_DOMINIO_GLPI/message/sendText/Natanael",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "Sua APIKEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "Seu Número de Celular@s.whatsapp.net"
+            },
+            {
+              "name": "text",
+              "value": "Você tem um Cliente precisando de atendimento Humano"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        464
+      ],
+      "id": "85a697c4-99e9-4bc7-9526-8d933713a70c",
+      "name": "chamar_atendente_humano"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.data.key.remoteJid }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1488,
+        288
+      ],
+      "id": "919f6e23-b1bb-43e1-bac8-33e419da711d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "66adf6c0-ade2-422b-9906-35c058074549",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "=\"consulta_chamado\"",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -912,
+        240
+      ],
+      "id": "606c972f-9a0d-4c39-a4ff-513025d7410d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c453300-a665-4158-b85b-2658a1d07ec7",
+              "name": "session_token",
+              "value": "={{ $json.session_token }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        224
+      ],
+      "id": "5f7b2f98-77f9-4d9b-bc8a-11218a605254",
+      "name": "numero seção 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://SEU_DOMINIO_GLPI/apirest.php/initSession",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"login\": \"SeuUsuario\",\n  \"password\": \"Sua Senha\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        224
+      ],
+      "id": "930f3d9c-c684-4af0-8b7c-61f9d969cbac",
+      "name": "Criar Seção 2"
+    },
+    {
+      "parameters": {
+        "url": "=https://glpi.nataia.space/apirest.php/Ticket/{{ $('Resposta Consulta').item.json.Reposta }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            },
+            {
+              "name": "Session-Token",
+              "value": "={{ $json.session_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        224
+      ],
+      "id": "2b43d366-8f74-45a3-b5d3-655bd84b6b23",
+      "name": "Consultar chamado"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('Informações do Chamado').item.json['Resultado Consultar Chamado'] }}\n{{ $('Informações do Chamado').item.json['Resultado Consultar Comentarios'] }}\n\n"
+            },
+            {
+              "content": "=Você é um assistente de suporte técnico.\nReceberá dois JSONs do GLPI: um com as informações do chamado e outro com os comentários do chamado.\n\nSua tarefa é:\n- Organizar os dados de forma clara e objetiva para o cliente.\n- Mostrar apenas o essencial: número do chamado, título, status atual, datas importantes (abertura, última atualização, previsão de solução) e comentários relevantes.\n- Evitar detalhes técnicos internos ou informações que só fazem sentido para a equipe de TI.\n- Caso não haja comentários ou atualizações, informar isso de forma simples.\n- A resposta deve ser curta, educada e no formato de relatório amigável.\n\nAqui estão os dados para você usar:\nChamado: {{ $('Informações do Chamado').item.json['Resultado Consultar Chamado'] }}\nComentários: {{ $('Informações do Chamado').item.json['Resultado Consultar Comentarios'] }}\n",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        560,
+        224
+      ],
+      "id": "ff907127-646b-4179-8d4f-69421f7d9ddf",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "QgALqI5Q3ihpBAix",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://glpi.nataia.space/apirest.php/Ticket/{{ $('Resposta Consulta').item.json.Reposta }}/ITILFollowup",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "App-Token",
+              "value": "SEU_APP_TOKEN"
+            },
+            {
+              "name": "Session-Token",
+              "value": "={{ $('numero seção 2').item.json.session_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        224
+      ],
+      "id": "4b4a78af-bb5a-413e-80ed-8af99623cb27",
+      "name": "Comentarios Chamados",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "Natanael",
+        "remoteJid": "={{ $('Filtrar informações').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.choices[0].message.content }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        832,
+        224
+      ],
+      "id": "3419c363-1cde-47e4-b027-5950b3c6e16b",
+      "name": "Enviar texto2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "6XocWGIwKK6YVhDo",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f4a23de9-1fa6-4345-b367-c7ea57d016c7",
+              "name": "Resultado Consultar Chamado",
+              "value": "={{ $('Consultar chamado').item.json }}",
+              "type": "string"
+            },
+            {
+              "id": "8c261437-0ab6-4e64-b8ce-cef7103e5d34",
+              "name": "Resultado Consultar Comentarios",
+              "value": "={{ $('Comentarios Chamados').item.json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        224
+      ],
+      "id": "895c073d-1ee0-479c-b28d-34c38354ed22",
+      "name": "Informações do Chamado"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f35cf4f5-acd9-474a-87bb-0d91fa6eb065",
+              "name": "Reposta",
+              "value": "={{ JSON.parse($json.output).consulta_chamado }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        224
+      ],
+      "id": "44053771-13a2-4b8e-8022-73671d0b059a",
+      "name": "Resposta Consulta"
+    },
+    {
+      "parameters": {
+        "content": "## Criar chamado\n",
+        "height": 256,
+        "width": 1312
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -800,
+        -480
+      ],
+      "typeVersion": 1,
+      "id": "ba98552f-585f-4a6b-85ef-3b2bc2ce3e67",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Consultar chamado\n",
+        "height": 256,
+        "width": 1792
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "8e99399c-cd51-4341-ba17-83308976c97d",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filtrar informações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "numero seção": {
+      "main": [
+        [
+          {
+            "node": "Criar Chamado GLPI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar informações": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Converter para String + Debug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        []
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Criar Seção",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter para String + Debug": {
+      "main": [
+        [
+          {
+            "node": "Saida Gpt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Saida Gpt": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto1": {
+      "main": [
+        []
+      ]
+    },
+    "Criar Seção": {
+      "main": [
+        [
+          {
+            "node": "numero seção",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Chamado GLPI": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chamar_atendente_humano": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Resposta Consulta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Seção 2": {
+      "main": [
+        [
+          {
+            "node": "numero seção 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "numero seção 2": {
+      "main": [
+        [
+          {
+            "node": "Consultar chamado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar chamado": {
+      "main": [
+        [
+          {
+            "node": "Comentarios Chamados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comentarios Chamados": {
+      "main": [
+        [
+          {
+            "node": "Informações do Chamado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Informações do Chamado": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resposta Consulta": {
+      "main": [
+        [
+          {
+            "node": "Criar Seção 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1015872a-584d-428f-b28c-e6d4caf96455",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "44920875b0fab21082835db2e7033aea936387088676db80dbae7234f1893b4e"
+  },
+  "id": "iXwLnOhk3sYfB6Vg",
+  "tags": []
+}
